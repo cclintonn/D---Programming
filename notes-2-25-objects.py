@@ -1,4 +1,4 @@
-    # Classes and objects
+# Classes and Objects
 
 # Big Ideas:
 #   - Classes allow us to couple data and functions together
@@ -24,7 +24,7 @@ class Pokemon:  # use a capital letter for class name
         """Represents the sound a Pokemon makes
 
         Returns:
-           - string representing the sound it makes"""
+            - string representing the sound it makes"""
         return f'{self.name} says, "{self.actual_cry}"!'
 
     def eat(self, food: str) -> str:
@@ -41,6 +41,36 @@ class Pokemon:  # use a capital letter for class name
             return f"{self.name} consumed the potion and feels healthier!"
         else:
             return f"{self.name} batted the {food} away."
+
+
+# Create a new child class of Pokemon
+class Pikachu(Pokemon):
+    def __init__(self, name="Pikachu"):
+        # Call constructor of parent class
+        super().__init__()
+
+        # Assign the default values to properties
+        self.name = name
+        self.id = 25
+        self.type = "Electric"
+        self.actual_cry = "Pikachu"
+
+    def thundershock(self, defender: Pokemon) -> str:
+        """Simulate a thundershock attack against
+        another Pokemon.
+
+        Params:
+            - defender: defending Pokemon
+
+        Returns:
+            str representing result of attack.
+        """
+        response = f"{self.name} used thundershock on {defender.name}!"
+
+        if defender.type.lower() in ["water", "flying"]:
+            response = response + " It was super effective."
+
+        return response
 
 
 # Create two Pokemon using our class
@@ -85,7 +115,18 @@ print(pokemon_two.cry())
 # Test the eat method
 print(pokemon_one.eat("berry"))
 print(pokemon_one.eat("potion"))
-print(pokemon_one.eat("poison")) 
+print(pokemon_one.eat("poison"))  # mr. ubial does not condone
 print(pokemon_two.eat("berry"))
 print(pokemon_two.eat("potion"))
-print(pokemon_two.eat("poison"))  
+print(pokemon_two.eat("poison"))  # mr. ubial does not condone
+
+pikachu_one = Pikachu()
+pikachu_two = Pikachu("Speedy")
+
+print(pikachu_one.name)  # "Pikachu"
+print(pikachu_two.name)  # "Speedy"
+print(pikachu_one.cry())
+print(pikachu_two.eat("potion"))
+
+print(pikachu_one.thundershock(pokemon_one))
+print(pikachu_two.thundershock(pokemon_two))
