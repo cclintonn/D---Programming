@@ -4,16 +4,21 @@
 
 import pygame
 
-#   - Child-class of Pygame Sprites
-#   - create a constructor method
 
 class Dvdlogo(pygame.sprite.Sprite):
-    """Represents DVD logo Sprite"""
-def __init__(self):
-    #       - image -> visual representation
-    self.image = pygame.image.load("./images/dvd-logo.png")
+    """Represents DVD logo sprite"""
 
-    #       - rect -> hitbox representation
+    def __init__(self):
+        super().__init__()
+
+        # image -> visual representation
+        self.image = pygame.image.load("./Images/dvd-logo.png")
+
+        # rect  -> hitbox representation
+        # get_rect() -> Rect
+        #     [x, y, width, height]
+        #     [0, 0, <width of image>, <height of image>]
+        self.rect = self.image.get_rect()
 
 
 def start():
@@ -44,12 +49,12 @@ def start():
 
     # Make a DVD Logo object
     dvdlogo = Dvdlogo()
-    
+
     # Create a group of sprites
     all_sprites = pygame.sprite.Group()
-   
+
     # Add the DVD Logo object to the group of sprites
-    all_sprites.add(dvdlogo) 
+    all_sprites.add(dvdlogo)
 
     # --MAIN LOOP--
     while not done:
@@ -63,9 +68,9 @@ def start():
         # --- Draw items
         screen.fill(BLACK)
 
-       # Draw all the sprites on the screen
+        # Draw all the sprites on the screen
         all_sprites.draw(screen)
-       
+
         # Update the screen with anything new
         pygame.display.flip()
 
