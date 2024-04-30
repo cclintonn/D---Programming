@@ -1,56 +1,81 @@
+import random
 import pygame as pg
 
-# --CONSTANTS--
-# COLOURS
-WHITE = (255, 255, 255)
+# ----- CONSTANTS
 BLACK = (0, 0, 0)
-EMERALD = (21, 219, 147)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
-GRAY = (128, 128, 128)
-
-WIDTH = 1280  # Pixels
+WHITE = (255, 255, 255)
+YELLOW = (255, 255, 0)
+SKY_BLUE = (95, 165, 228)
+WIDTH = 1280
 HEIGHT = 720
-SCREEN_SIZE = (WIDTH, HEIGHT)
+TITLE = "Snowscape"
+
+NUM_SNOW = 100
 
 
-def start():
-    """Environment Setup and Game Loop"""
+class Snow(pg.sprite.Sprite):
+    def __init__(self, width: int):
+        """
+        Params:
+            width: width of snow in px
+        """
+        super().__init__()
 
+        self.image = pg.Surface((width, width))
+
+        pg.draw.circle(self.image, WHITE, (width // 2, width // 2), width // 2)
+
+        self.rect = self.image.get_rect()
+
+        self.rect.centerx = random.randrange(0, WIDTH + 1)
+        self.rect.centery = HEIGHT // 2
+
+
+def main():
     pg.init()
 
-    # --Game State Variables--
-    screen = pg.display.set_mode(SCREEN_SIZE)
+    # ----- SCREEN PROPERTIES
+    size = (WIDTH, HEIGHT)
+    screen = pg.display.set_mode(size)
+    pg.display.set_caption(TITLE)
+
+    # ----- LOCAL VARIABLES
     done = False
     clock = pg.time.Clock()
 
-    # All sprites go in this sprite Group
-    all_sprites = pg.sprite.Group()
+    # Create a snow sprites group
+    snow_sprites = pg.sprite.Group()
 
-    pg.display.set_caption("<WINDOW TITLE HERE>")
+    # Create more snow
+    for _ in range(100):
+        snow_sprites.add(Snow(10))
 
-    # --Main Loop--
+    # ----- MAIN LOOP
     while not done:
-        # --- Event Listener
+        # -- Event Handler
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 done = True
 
-        # --- Update the world state
+        # ----- LOGIC
+        snow_sprites.update()
 
-        # --- Draw items
+        # ----- RENDER
         screen.fill(BLACK)
 
-        # Update the screen with anything new
+        # Draw all the sprite groups
+        snow_sprites.draw(screen)
+
+        # ----- UPDATE DISPLAY
         pg.display.flip()
+        clock.tick(60)
 
-        # --- Tick the Clock
-        clock.tick(60)  # 60 fps
+    pg.quit()
 
 
-def main():
-    start()
+def random_coords():
+    x, y = (random.randrange(0, WIDTH), random.randrange(0, HEIGHT))
+    return x, y
 
 
 if __name__ == "__main__":
