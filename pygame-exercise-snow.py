@@ -1,81 +1,94 @@
-import random
 import pygame as pg
+import random
 
-# ----- CONSTANTS
-BLACK = (0, 0, 0)
+# --CONSTANTS--
+# COLOURS
 WHITE = (255, 255, 255)
-YELLOW = (255, 255, 0)
-SKY_BLUE = (95, 165, 228)
-WIDTH = 1280
+BLACK = (0, 0, 0)
+EMERALD = (21, 219, 147)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+GRAY = (128, 128, 128)
+
+WIDTH = 1280  # Pixels
 HEIGHT = 720
-TITLE = "Snowscape"
-
-NUM_SNOW = 100
+SCREEN_SIZE = (WIDTH, HEIGHT)
 
 
-class Snow(pg.sprite.Sprite):
-    def __init__(self, width: int):
-        """
-        Params:
-            width: width of snow in px
-        """
+class Snowflake(pg.sprite.Sprite):
+    # create constructor
+    #   image, rect
+    def __init__(self, size: int):
+        # Superclass constructor
         super().__init__()
 
-        self.image = pg.Surface((width, width))
+        # Creating a "blank" image
+        self.image = pg.Surface((size, size))
 
-        pg.draw.circle(self.image, WHITE, (width // 2, width // 2), width // 2)
-
+        # Draw a circle on the blank image
+        pg.draw.circle(
+            self.image,
+            WHITE,
+            (size // 2, size // 2), # draw in the middle of the "blank image"
+            size // 2
+        )
         self.rect = self.image.get_rect()
 
-        self.rect.centerx = random.randrange(0, WIDTH + 1)
-        self.rect.centery = HEIGHT // 2
+        # Random x-axis spawning
+        self.rect.x = random.randint(0, WIDTH - size)
+
+        self.rect.y = random.randint(-HEIGHT, -size)
+      
+    def update(self):
+        self.rect.y += 2
+
+        if self.rect.top > HEIGHT:
+            self.rect.x = random.randint(0, WIDTH - self.rect.width)
+
+            self.rect.y = random.randint(-100, self.rect.height)
 
 
-def main():
+def start():
+    """Environment Setup and Game Loop"""
+
     pg.init()
 
-    # ----- SCREEN PROPERTIES
-    size = (WIDTH, HEIGHT)
-    screen = pg.display.set_mode(size)
-    pg.display.set_caption(TITLE)
-
-    # ----- LOCAL VARIABLES
+    # --Game State Variables--
+    screen = pg.display.set_mode(SCREEN_SIZE)
     done = False
     clock = pg.time.Clock()
 
-    # Create a snow sprites group
-    snow_sprites = pg.sprite.Group()
+    # All sprites go in this sprite Group
+    all_sprites = pg.sprite.Group()
 
-    # Create more snow
-    for _ in range(100):
-        snow_sprites.add(Snow(10))
+    for _ in range(50):
+        all_sprites.add(Snowflake(10))
 
-    # ----- MAIN LOOP
+    pg.display.set_caption("<WINDOW TITLE HERE>")
+
+    # --Main Loop--
     while not done:
-        # -- Event Handler
+        # --- Event Listener
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 done = True
 
-        # ----- LOGIC
-        snow_sprites.update()
-
-        # ----- RENDER
+        # --- Update the world state
+        all_sprites.update()
+        # --- Draw items
         screen.fill(BLACK)
 
-        # Draw all the sprite groups
-        snow_sprites.draw(screen)
-
-        # ----- UPDATE DISPLAY
+        all_sprites.draw(screen)         
+        # Update the screen with anything new
         pg.display.flip()
-        clock.tick(60)
 
-    pg.quit()
+        # --- Tick the Clock
+        clock.tick(60)  # 60 fps
 
 
-def random_coords():
-    x, y = (random.randrange(0, WIDTH), random.randrange(0, HEIGHT))
-    return x, y
+def main():
+    start()
 
 
 if __name__ == "__main__":
