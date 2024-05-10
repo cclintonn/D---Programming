@@ -35,13 +35,15 @@ class Player(pg.sprite.Sprite):
         super().__init__()
 
         self.images = [
-            pg.image.load("./Images/mario.png"),
-            pg.transform.flip(pg.image.load("./Images/mario.png"), True, False),
+            pg.image.load("./Images/mario.webp"),
+            pg.transform.flip(pg.image.load("./Images/mario.webp"), True, False),
         ]
 
         self.image = self.images[0]
 
         self.rect = self.image.get_rect()
+
+        self.lives_remaining = 3
 
         self.facing = 0  # 0 is right, 1 is left
 
@@ -121,6 +123,8 @@ def start():
 
     score = 0
 
+    font = pg.font.SysFont("Helvetica", 24)
+
     # -- Sprite Groups
     # All sprites go in this sprite Group
     all_sprites = pg.sprite.Group()
@@ -173,10 +177,30 @@ def start():
                 all_sprites.add(coin)
                 coin_sprites.add(coin)
 
+        # Detect collision with enemies
+        enemies_collided = pg.sprite.spritecollide(player, enemy_sprites, False)
+
+        # Iterate through enemies collided to notify in console
+        for enemy in enemies_collided:
+            # Decrease player's life by one life per second
+            player.lives_remaining -= 1 / 60 
+
+            # Print player;s current lives remaining
+            print(f"Lives: {int(player.lives_remaining)}")
+
         # --- Draw items
         screen.fill(WHITE)
 
         all_sprites.draw(screen)
+
+        # Create and image that has the score in it
+        score_image = font.render(f"Score: {score}", True, GREEN)
+        lives_image = font.render(
+            f"Lives Remaining: {int(player.lives_remaining)}", True, GREEN
+        )
+
+        screen.blit(score_image, (5, 5))
+        screen.blit(lives_image, (5, 35))
 
         # Update the screen with anything new
         pg.display.flip()
