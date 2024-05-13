@@ -1,3 +1,6 @@
+# pygame-example-shmup.py
+# Shoot 'em up
+
 import pygame as pg
 
 # --CONSTANTS--
@@ -10,9 +13,53 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 GRAY = (128, 128, 128)
 
-WIDTH = 1000  # Pixels
-HEIGHT = 720
+WIDTH = 720
+HEIGHT = 1000
 SCREEN_SIZE = (WIDTH, HEIGHT)
+
+
+class Player(pg.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+
+        self.image = pg.image.load("./Images/galaga_ship.png")
+
+        self.rect = self.image.get_rect()
+
+    def update(self):
+        """Follow the mouse"""
+        self.rect.center = pg.mouse.get_pos()
+
+        # Keep it at the bottom of the screen
+        if self.rect.top < HEIGHT - 200:
+            self.rect.top = HEIGHT - 200
+
+
+# TODO: Bullets/lasers
+#      - Image - picture or pygame surface?
+#      - Spawn at the Player
+#      - Vertical velocity
+class Bullet(pg.sprite.Sprite):
+    def __init__(self, player_loc: list):
+        """
+        Params:
+            player_loc: x,y coords of centerx and top
+        """
+        super().__init__()
+
+        # Green rectangle
+        self.image = pg.Surface((10, 25))
+        self.image.fill(GREEN)
+
+        self.rect = self.image.get_rect()
+
+        # Spawn at the Player
+        self.rect.centerx = player_loc[0]
+        self.rect.bottom = player_loc[1]
+
+
+# TODO: Enemies
+#      - Move left to right to left
 
 
 def start():
@@ -28,7 +75,12 @@ def start():
     # All sprites go in this sprite Group
     all_sprites = pg.sprite.Group()
 
-    pg.display.set_caption("<Shmup>")
+    # Create the Player sprite object
+    player = Player()
+
+    all_sprites.add(player)
+
+    pg.display.set_caption("Shoot 'Em Up")
 
     # --Main Loop--
     while not done:
@@ -36,11 +88,16 @@ def start():
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 done = True
+            if event.type == pg.MOUSEBUTTONDOWN:
+                all_sprites.add(Bullet((player.rect.centerx, player.rect.top)))
 
         # --- Update the world state
+        all_sprites.update()
 
         # --- Draw items
         screen.fill(BLACK)
+
+        all_sprites.draw(screen)
 
         # Update the screen with anything new
         pg.display.flip()
